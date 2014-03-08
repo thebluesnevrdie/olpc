@@ -1,0 +1,40 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+.header-text {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.header-text h1 {
+  padding: 0;
+  margin: 0;
+  font-size: 3.5em;
+  font-weight: 700;
+}
+
+.header {
+  display: table;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background: url(../img/bg.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.limited-form {
+    max-width: 400px;
+    text-align: left;
+}
+
+.element-box {
+    padding-top: 2.5em;
+    padding-bottom: 2.5em;
+}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" <% block app %><% endblock -%> >
+<head>
+    <meta charset="utf-8">
+    <title>User Administration</title>
+    <link rel="stylesheet" href="<< url_for('static', filename='css/app.css') >>">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <base href="<< url_for('route_root') >>" />
+    <%- block head %>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-animate.js"></script>
+    <script src="<< url_for('static', filename='js/app.js') >>"></script>
+    <% endblock -%>
+</head>
+<body>
+    <div id="top" class="header" <% block controller %><% endblock -%> >
+        <div class="header-text">
+            <div class="container-top-box">
+            <h1>User Password Change</h1>
+                <% block body %>
+                <% endblock %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -154,38 +154,51 @@ def route_changePassword():
     """
     # Get JSON POST data
     post = request.get_json(force=True)
-    # Get data from token
-    data = open_token(post["token"])
-    if not data:
-        # Validates token in case of malicious request
-        return jsonify({
-            "can_retry": 0,
-            "errors": [
-                {
-                    "type": "danger",
-                    "msg": "Provided token is invalid"
-                }
-            ]
-        })
+
     # Validates input in case data was not crafted by NG or client code is
     # deficient.
     if (   post["password"] != post["password_confirm"]
-        or len(post["password"]) == 0
+        or len(post["password"]) < 8
     ):
         return jsonify({
             "can_retry": 1,
             "errors": [
                 {
                     "type": "danger",
-                    "msg": "Password and confirmation do not match"
+                    "msg": "Password and confirmation do not match or password too short."
                 }
             ]
         })
-    # Change password
-    errors = change_password(data["dn"], post["password"])
+
+
+    changePasswordwithOld = 'password_old' in post
+    # Switch for change password either with old password or token
+    if changePasswordwithOld:
+        dn = 'cn={},{}'.format(post["name"], app.config["USEROU"])
+        # Change password with old password
+        errors = change_password(dn, post["password"], oldPassword = post["password_old"])
+
+    else:
+        # Get data from token
+        data = open_token(post["token"])
+        if not data:
+            # Validates token in case of malicious request
+            return jsonify({
+                "can_retry": 0,
+                "errors": [
+                    {
+                        "type": "danger",
+                        "msg": "Provided token is invalid"
+                    }
+                ]
+            })
+        # Change password with token
+        errors = change_password(data["dn"], post["password"])
+
     if len(errors) == 0:
-        # If password has been changed, delete token
-        delete_token(post["token"])
+        if not changePasswordwithOld:
+            # If password has been changed, delete token
+            delete_token(post["token"])
         return jsonify({
             "can_retry": 0,
             "errors": []

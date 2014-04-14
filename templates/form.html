@@ -31,7 +31,7 @@
                ng-model="user.password"
                name="password"
                class="form-control"
-               required
+               ng-minlength=8 required
                placeholder="Password"
         >
     </div>
@@ -49,9 +49,13 @@
             ng-show="user.password != user.password_confirm"
             class="text-warning"
         >Passwords do not match</p>
+        <p
+            ng-show="pwdChng.password.$error.minlength"
+            class="text-warning"
+        >Password is too short</p>
     </div>
     <button
-            ng-show="user.password && user.password == user.password_confirm"
+            ng-show="pwdChng.password.$valid && user.password == user.password_confirm"
             ng-click="update(user)"
             ng-disabled="uploading"
             class="btn btn-warning pull-right"

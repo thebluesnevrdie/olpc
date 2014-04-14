@@ -26,7 +26,7 @@ app.config.from_object("config")
 err_danger = lambda msg:{"type": "danger", "msg": msg}
 err_warning = lambda msg:{"type": "warning", "msg": msg}
 
-def change_password(dn, password):
+def change_password(dn, password, oldPassword = False):
     """
         Change the password of a user identified by ``dn``.
         
@@ -34,18 +34,27 @@ def change_password(dn, password):
     """
     try:
         # Connect and Authenticate as administrator
-        con = ldapom.LDAPConnection(
-            app.config["LDAPURL"],
-            app.config["USEROU"],
-            app.config["ADMINDN"],
-            app.config["ADMINPWD"]
-        )
+        if oldPassword is not False:
+            con = ldapom.LDAPConnection(
+                app.config["LDAPURL"],
+                app.config["USEROU"],
+                dn,
+                oldPassword
+            )
+            print("using ldap userbind")
+        else:
+            con = ldapom.LDAPConnection(
+                app.config["LDAPURL"],
+                app.config["USEROU"],
+                app.config["ADMINDN"],
+                app.config["ADMINPWD"]
+            )
     except ldapom.LDAPServerDownError as e:
         app.logger.error("Unable to connect LDAP server: {!s}".format(e))
         return [err_danger("Could not access LDAP server")]
     except ldapom.LDAPInvalidCredentialsError as e:
         app.logger.error("Invalid credentials for LDAP: {!s}".format(e))
-        return [err_danger("Could not access LDAP server")]
+        return [err_danger("Invalid credentials for LDAP")]
     # Get handle to user entry
     entry = con.get_entry(dn)
     if not entry.exists():

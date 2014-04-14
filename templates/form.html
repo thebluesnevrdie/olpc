@@ -1,6 +1,6 @@
 <% extends "index.html" %>
 <% block app %>ng-app="UsrAdmApp"<% endblock %>
-<% block controller %>ng-controller="UsrAdmCtrl"<% endblock %>
+<% block controller %>ng-controller="UsrAdmCtrl as usradm"<% endblock %>
 <% block head %>
 <script type="text/javascript">
     var token = "<< token >>";
@@ -9,26 +9,26 @@
 << super() >>
 <%endblock %>
 <% block body %>
-<div class="element-box animate-show container-box " ng-show="show_ok">
+<div class="element-box animate-show container-box " ng-show="usradm.show_ok">
     <h4 class="text-success"><span class="glyphicon glyphicon-ok"></span>
         Password changed succesfully
     </h4>
 </div>
-<div class="element-box container-box"  ng-show="show_invalid">
+<div class="element-box container-box"  ng-show="usradm.show_invalid">
     <h4 class="text-danger">
         <span class="glyphicon glyphicon-remove-sign"></span>
         This page is no longer valid
     </h4>
 </div>
-<div class="container limited-form animate-show" ng-show="show_form">
-    <h3>Welcome {{user.name}}</h3>
-    <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.msg}}</alert>
+<div class="container limited-form animate-show" ng-show="usradm.show_form">
+    <h3>Welcome {{usradm.user.name}}</h3>
+    <alert ng-repeat="alert in usradm.alerts" type="alert.type" close="usradm.closeAlert($index)">{{alert.msg}}</alert>
     <form role="form" name="pwdChng">
     <div class="form-group">
         <label>New password:</label>
         <input 
                type="password"
-               ng-model="user.password"
+               ng-model="usradm.user.password"
                name="password"
                class="form-control"
                required
@@ -39,24 +39,24 @@
         <label>Confirm password:</label>
         <input
                type="password"
-               ng-model="user.password_confirm"
+               ng-model="usradm.user.password_confirm"
                name="confirm_password"
                class="form-control"
                required
                placeholder="Confirm password"
         >
         <p
-            ng-show="user.password != user.password_confirm"
+            ng-show="usradm.user.password != usradm.user.password_confirm"
             class="text-warning"
         >Passwords do not match</p>
     </div>
     <button
-            ng-show="user.password && user.password == user.password_confirm"
-            ng-click="update(user)"
-            ng-disabled="uploading"
+            ng-show="usradm.user.password && usradm.user.password == usradm.user.password_confirm"
+            ng-click="usradm.update(usradm.user)"
+            ng-disabled="usradm.uploading"
             class="btn btn-warning pull-right"
-    ><span ng-hide="uploading">Change Password</span>
-    <img src="<< url_for('static', filename='img/loader.gif') >>" ng-show="uploading">
+    ><span ng-hide="usradm.uploading">Change Password</span>
+    <img src="<< url_for('static', filename='img/loader.gif') >>" ng-show="usradm.uploading">
     </button>
     </form>
 </div>

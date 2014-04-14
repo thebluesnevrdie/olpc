@@ -23,8 +23,8 @@ app = FlaskSpecialJinja(__name__)
 app.config.from_object("config")
 
 # Helper functions to create JSON error messages that can be displayed by NG
-err_danger = lambda msg:{"type": "danger", "msg": msg}
-err_warning = lambda msg:{"type": "warning", "msg": msg}
+err_danger = lambda msg: {"type": "danger", "msg": msg}
+err_warning = lambda msg: {"type": "warning", "msg": msg}
 
 def change_password(dn, password):
     """
@@ -121,7 +121,7 @@ def route_token(token):
         # Unknown token, display error page
         return render_template('linkinvalid.html')
 
-@app.route("/changePassword" , methods=['POST'])
+@app.route("/changePassword", methods=['POST'])
 def route_changePassword():
     """
         Action to change the password. This route expected to be called with

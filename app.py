@@ -109,6 +109,21 @@ def route_root():
     """
     return render_template('nothingtosee.html')
 
+@app.route("/passwd/<username>")
+def route_passwd(username):
+    """
+        Route to renew the password by yourself, without a token but with the old
+        password.
+    """
+    if username:
+        return render_template(
+            'passwd_form.html',
+            username=username
+        )
+    else:
+        # Unknown token, display error page
+        return render_template('linkinvalid.html')
+
 @app.route("/<token>")
 def route_token(token):
     """

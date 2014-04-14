@@ -1,0 +1,83 @@
+<% extends "index.html" %>
+<% block app %>ng-app="UsrAdmApp"<% endblock %>
+<% block controller %>ng-controller="UsrAdmCtrl"<% endblock %>
+<% block head %>
+<script type="text/javascript">
+    var token = "";
+    var username = "<< username >>";
+    var passwd = True;
+</script>
+<< super() >>
+<%endblock %>
+<% block body %>
+<div class="element-box animate-show container-box " ng-show="show_ok">
+    <h4 class="text-success"><span class="glyphicon glyphicon-ok"></span>
+        Password changed succesfully
+    </h4>
+</div>
+<div class="element-box container-box"  ng-show="show_invalid">
+    <h4 class="text-danger">
+        <span class="glyphicon glyphicon-remove-sign"></span>
+        This page is no longer valid
+    </h4>
+</div>
+<div class="container limited-form animate-show" ng-show="show_form">
+    <h3>Welcome {{user.name}}</h3>
+    <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.msg}}</alert>
+    <form role="form" name="pwdChng">
+    <div class="form-group">
+        <label>Old password:</label>
+        <input 
+               type="password"
+               ng-model="user.password_old"
+               name="password_old"
+               class="form-control"
+               required
+               placeholder="Old password"
+        >
+        <p
+            ng-show="pwdChng.password_old.$invalid && pwdChng.password.$valid && pwdChng.confirm_password.$valid"
+            class="text-warning"
+        >Old password required</p>
+    </div>
+    <div class="form-group">
+        <label>New password:</label>
+        <input 
+               type="password"
+               ng-model="user.password"
+               name="password"
+               class="form-control"
+               ng-minlength=8 required
+               placeholder="Password"
+        >
+    </div>
+    <div class="form-group">
+        <label>Confirm password:</label>
+        <input
+               type="password"
+               ng-model="user.password_confirm"
+               name="confirm_password"
+               class="form-control"
+               ng-minlength=8 required
+               placeholder="Confirm password"
+        >
+        <p
+            ng-show="user.password != user.password_confirm"
+            class="text-warning"
+        >Passwords do not match</p>
+        <p
+            ng-show="pwdChng.password.$error.minlength"
+            class="text-warning"
+        >Password is too short</p>
+    </div>
+    <button
+            ng-show="pwdChng.password_old.$valid && pwdChng.password.$valid && user.password == user.password_confirm"
+            ng-click="update(user)"
+            ng-disabled="uploading"
+            class="btn btn-warning pull-right"
+    ><span ng-hide="uploading">Change Password</span>
+    <img src="<< url_for('static', filename='img/loader.gif') >>" ng-show="uploading">
+    </button>
+    </form>
+</div>
+<% endblock %>

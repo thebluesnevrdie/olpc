@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 from flask import Flask, render_template, jsonify, request
 import json
 import os.path
 import ldapom
+import io
 
 # Change the default template syntax as it conflicts with angular's
 class FlaskSpecialJinja(Flask):
@@ -65,7 +68,7 @@ def open_token(token):
     """
     fullpath = validate_token(token)
     if fullpath:
-        with open(fullpath, "r", encoding="utf-8") as f:
+        with io.open(fullpath, "rt", encoding="utf-8") as f:
             return json.load(f)
     else:
         return None

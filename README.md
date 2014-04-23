@@ -1,15 +1,13 @@
 Online LDAP Password Changer
 ============================
 
-This little Python 3 [Flask][] / [Angular.js][] application allows users to change their password online from an LDAP directory when they receive a secret URL from an administrator.
+This little [Flask][] / [Angular.js][] application allows users to change their password online from an LDAP directory when they receive a secret URL from an administrator.
 
 An administrator creates a token for a user using the `maketoken.py` script. They then sends this token to the user containing the token in the form `https://example.com/path_to_app/<token>`.
 
 When following the link, the user is presented a form where they can change their password.
 
-The application makes use of the nice [ldapom][] module to access the LDAP directory.
-
-Python 2 is not supported at the moment (contribute?).
+The application makes use of the nice [ldapom][] module to access the LDAP directory and should work with Python 2.7 and higher (tested with 2.7, 3.3 and 3.4).
 
 [Flask]: http://flask.pocoo.org/
 [Angular.js]: http://angularjs.org/

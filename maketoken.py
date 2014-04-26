@@ -30,6 +30,7 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #  
 
+from __future__ import print_function, unicode_literals
 
 import argparse
 import sys
@@ -40,6 +41,7 @@ import struct
 import os.path
 import json
 import os
+import io
 
 def error(*args, **kwargs):
     kwargs.update(dict(file=sys.stderr))
@@ -55,11 +57,11 @@ def fnv64(data):
 
 def hash_dn(dn, salt):
     # Turn dn into bytes with a salt, dn is expected to be ascii data
-    data = salt.encode("ascii") + dn.encode("ascii")
+    data = bytearray(salt.encode("ascii") + dn.encode("ascii"))
     # Hash data
     hash_ = fnv64(data)
     # Pack hash (int) into bytes
-    bhash = struct.pack("<Q", hash_)
+    bhash = struct.pack(b"<Q", hash_)
     # Encode in base64. There is always a padding "=" at the end, because the
     # hash is always 64bits long. We don't need it.
     return base64.urlsafe_b64encode(bhash)[:-1].decode("ascii")
@@ -77,9 +79,9 @@ def get_user_info(uid):
             config.ADMINPWD
         )
     except ldapom.LDAPServerDownError as e:
-        raise RuntimeError("Unable to connect to server") from e
+        raise RuntimeError("Unable to connect to server")
     except ldapom.LDAPInvalidCredentialsError as e:
-        raise RuntimeError("Invalid credentials for connection") from e
+        raise RuntimeError("Invalid credentials for connection")
     # Get handle to user entry
     dn = "cn={},{}".format(uid, config.USEROU)
     print(dn)
@@ -111,11 +113,12 @@ def create(uid, quiet=False):
         return -2
     # Create token file
     try:
-        with open(filepath, "w", encoding="utf-8") as f:
-            json.dump(
+        with io.open(filepath, "wt", encoding="utf-8") as fp:
+            jsondata = json.dumps(
                 {"dn": entry.dn, "username": get(entry.cn)},
-                f, ensure_ascii=False
+                ensure_ascii=False
             )
+            fp.write(jsondata)
     except IOError as e:
         error("ERROR: creation of token file failed: {!s}".format(e))
         return -3

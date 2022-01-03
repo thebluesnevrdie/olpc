@@ -83,7 +83,7 @@ def get_user_info(uid):
     except ldapom.LDAPInvalidCredentialsError as e:
         raise RuntimeError("Invalid credentials for connection")
     # Get handle to user entry
-    dn = "cn={},{}".format(uid, config.USEROU)
+    dn = "{},{}".format(uid, config.USEROU)
     print(dn)
     entry = con.get_entry(dn)
     if not entry.exists():
@@ -131,7 +131,7 @@ def create(uid, quiet=False):
 
 def delete(uid, quiet=False):
     # Create dn
-    dn = "cn={},{}".format(uid, config.USEROU)
+    dn = "{},{}".format(uid, config.USEROU)
     # Hash dn to get unique token
     token = hash_dn(dn, config.SALT)
     filepath = os.path.join(

@@ -115,25 +115,6 @@ def route_root():
         message='This page is only accessible with a token'
     )
 
-
-@app.route("/passwd/<username>")
-def route_passwd(username):
-    """
-        Route to renew the password by yourself, without a token but with the old
-        password.
-    """
-    if username:
-        return render_template(
-            'passwd_form.html',
-            username=username
-        )
-    else:
-        # Unknown token, display error page
-        return render_template(
-            'error.html',
-            message='This token is no longer valid'
-        )
-
 @app.route("/<token>")
 def route_token(token):
     """
@@ -190,34 +171,27 @@ def route_changePassword():
         })
 
 
-    changePasswordwithOld = 'password_old' in post
-    # Switch for change password either with old password or token
-    if changePasswordwithOld:
-        dn = 'cn={},{}'.format(post["name"], app.config["USEROU"])
-        # Change password with old password
-        errors = change_password(dn, post["password"], oldPassword = post["password_old"])
+    # Get data from token
+    data = open_token(post["token"])
+    if not data:
+        # Validates token in case of malicious request
+        return jsonify({
+            "can_retry": 0,
+            "errors": [
+                {
+                    "type": "danger",
+                    "msg": "Provided token is invalid"
+                }
+            ]
+        })
 
-    else:
-        # Get data from token
-        data = open_token(post["token"])
-        if not data:
-            # Validates token in case of malicious request
-            return jsonify({
-                "can_retry": 0,
-                "errors": [
-                    {
-                        "type": "danger",
-                        "msg": "Provided token is invalid"
-                    }
-                ]
-            })
-        # Change password with token
-        errors = change_password(data["dn"], post["password"])
+    # Change password with token
+    dn = 'uid={},{}'.format(post["username"], app.config["USEROU"])
+    errors = change_password(dn, post["password"])
 
     if len(errors) == 0:
-        if not changePasswordwithOld:
-            # If password has been changed, delete token
-            delete_token(post["token"])
+        # If password has been changed, delete token
+        delete_token(post["token"])
         return jsonify({
             "can_retry": 0,
             "errors": []

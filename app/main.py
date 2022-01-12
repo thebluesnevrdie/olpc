@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_file
 import json
 import os.path
 import ldapom
@@ -115,6 +115,7 @@ def route_root():
         message='This page is only accessible with a token'
     )
 
+
 @app.route("/passwd/<username>")
 def route_passwd(username):
     """
@@ -136,26 +137,32 @@ def route_passwd(username):
 @app.route("/<token>")
 def route_token(token):
     """
-        Main page with a token. Validates the token and return the main page or
-        an error page if token is invalid.
+        Main page with a token. Validates the token and return password/config page
+        or an error page if token is invalid.
     """
     # Special treatment for the file used to make git track the empty folder
     if token == ".keep": return render_template('nothingtosee.html')
     # Obtain information about the user based on token
     data = open_token(token)
     if data:
-        # Main page
-        return render_template(
-            'form.html',
-            token=token,
-            username=data["username"]
-        )
-    else:
-        # Unknown token, display error page
-        return render_template(
-            'error.html',
-            message='This token is no longer valid'
-        )
+        if data["type"] == "config":
+            return render_template(
+                'dl_form.html',
+                token=token,
+                displayname=data["displayname"]
+            )
+        elif data["type"] == "password":
+            return render_template(
+                'form.html',
+                token=token,
+                username=data["displayname"]
+            )
+
+    # Unknown token, display error page
+    return render_template(
+        'error.html',
+        message='This token is no longer valid'
+    )
 
 @app.route("/changePassword", methods=['POST'])
 def route_changePassword():
@@ -220,6 +227,31 @@ def route_changePassword():
             "can_retry": 1,
             "errors": errors
         })
+
+@app.route("/<token>/Download")
+def route_vpnDownload(token):
+    data = open_token(token)
+    if not data:
+        # Unknown token, display error page
+        return render_template(
+            'error.html',
+            message='This token is no longer valid'
+        )
+
+    username = data["username"]
+    fullpath = os.path.join(app.instance_path, "vpn-configs", username + '.ovpn')
+    if os.path.exists(fullpath):
+        delete_token(token)
+        return send_file(fullpath,
+                     mimetype='application/x-openvpn-profile',
+                     attachment_filename='sunvia-'+username+'.ovpn',
+                     as_attachment=True)
+    else:
+        return render_template(
+            'error.html',
+            message='VPN config file missing'
+        )
+
 
 if __name__ == "__main__":
     app.run()

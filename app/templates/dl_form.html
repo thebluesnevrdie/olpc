@@ -1,0 +1,18 @@
+<% extends "index.html" %>
+<% block head %>
+<< super() >>
+<%endblock %>
+<% block body %>
+
+<div class="container">
+    <h3>Welcome << displayname >></h3>
+      <p>Click below to download your VPN config
+	<div class="element-box container-box">
+	  <a href="/<< token >>/Download">
+	    <button class="btn btn-danger">
+              <span>Download</span>
+	    </button>
+	  </a>
+	</div>
+</div>
+<% endblock %>

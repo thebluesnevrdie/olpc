@@ -136,7 +136,7 @@ def route_token(token):
             return render_template(
                 'form.html',
                 token=token,
-                username=data["displayname"]
+                username=data["username"]
             )
 
     # Unknown token, display error page
@@ -186,7 +186,7 @@ def route_changePassword():
         })
 
     # Change password with token
-    dn = 'uid={},{}'.format(post["username"], app.config["USEROU"])
+    dn = 'uid={},{}'.format(post["name"], app.config["USEROU"])
     errors = change_password(dn, post["password"])
 
     if len(errors) == 0:

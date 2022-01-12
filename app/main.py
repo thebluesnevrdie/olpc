@@ -110,7 +110,10 @@ def route_root():
         The default route is useless, main page must be accessed with a specific
         URL containing the token.
     """
-    return render_template('nothingtosee.html')
+    return render_template(
+        'error.html',
+        message='This page is only accessible with a token'
+    )
 
 @app.route("/passwd/<username>")
 def route_passwd(username):
@@ -125,7 +128,10 @@ def route_passwd(username):
         )
     else:
         # Unknown token, display error page
-        return render_template('linkinvalid.html')
+        return render_template(
+            'error.html',
+            message='This token is no longer valid'
+        )
 
 @app.route("/<token>")
 def route_token(token):
@@ -146,7 +152,10 @@ def route_token(token):
         )
     else:
         # Unknown token, display error page
-        return render_template('linkinvalid.html')
+        return render_template(
+            'error.html',
+            message='This token is no longer valid'
+        )
 
 @app.route("/changePassword", methods=['POST'])
 def route_changePassword():

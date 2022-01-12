@@ -55,10 +55,9 @@
         >Password is too short</p>
     </div>
     <button
-            ng-show="usradm.user.password.$valid && usradm.user.password == usradm.user.password_confirm"
             ng-click="usradm.update(usradm.user)"
             ng-disabled="usradm.uploading"
-            class="btn btn-warning pull-right"
+            class="btn btn-danger pull-right"
     ><span ng-hide="usradm.uploading">Change Password</span>
     <img src="<< url_for('static', filename='img/loader.gif') >>" ng-show="usradm.uploading">
     </button>
